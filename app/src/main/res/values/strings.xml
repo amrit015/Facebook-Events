@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">Facebook_Events</string>
+    <string name="app_name">Test_facebook_api</string>
+    <string name="facebook_app_id">427275814320195</string>
+    <string name="fb_login_protocol_scheme">fb427275814320195</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
+    <string name="ok">OK</string>
+    <string name="hello_user">User</string>
 </resources>
