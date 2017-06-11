@@ -8,6 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +26,9 @@ import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
@@ -30,6 +36,8 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -66,6 +74,9 @@ public class FacebookFragment extends Fragment {
     private ProfileTracker profileTracker;
     private LinearLayout main_layout;
     private PendingAction pendingAction = PendingAction.NONE;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,6 +123,11 @@ public class FacebookFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_facebook, parent, false);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         loginButton = (LoginButton) v.findViewById(R.id.loginButton);
         main_layout = (LinearLayout) v.findViewById(R.id.main_layout);
         profilePicImageView = (ImageView) v.findViewById(R.id.profilePicture);
@@ -143,6 +159,7 @@ public class FacebookFragment extends Fragment {
                         Toast toast = Toast.makeText(getActivity(), "Logged In", Toast.LENGTH_SHORT);
                         toast.show();
                         updateUI();
+                        FetchEvents();
                     }
 
                     @Override
@@ -184,6 +201,106 @@ public class FacebookFragment extends Fragment {
         return v;
     }
 
+    private void FetchEvents() {
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+//                            "/{event-id}",
+                "/search?q=nepal,kathmandu&type=event&limit=25&fields=id,name,cover,description,place,end_time,start_time",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        Log.i(TAG, "Result: " + response.toString());
+                                    /* handle the result */
+                        try {
+                            jsonObject = new JSONObject(String.valueOf(response.getJSONObject()));
+                            Log.i(TAG, "JObject: " + jsonObject);
+                            FetchData();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.i(TAG, "Inside exception");
+                        }
+                    }
+                }
+        ).executeAsync();
+    }
+
+    private void FetchData() {
+        JSONArray jsonArray = null;
+        JSONObject place = null;
+        JSONObject location = null;
+        String description = "Unknown";
+        String city = "Unknown";
+        JSONObject cover;
+        String endDate = null;
+        String startDate = null;
+        String source = null;
+
+        try {
+            jsonArray = jsonObject.getJSONArray("data");
+            Log.i(TAG, "JArray : " + jsonArray);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                //getting and converting into strings
+//                JSONObject a = jsonArray.getJSONObject(i);
+                JSONObject c = jsonArray.getJSONObject(i);
+                String name = c.getString("name");
+                Log.i(TAG, "name : " + name);
+
+                if (c.has("start_time") && !c.isNull("start_time")) {
+                    startDate = c.getString("start_time");
+                    Log.i(TAG, "startDate: " + startDate);
+                }
+
+                if (c.has("end_time") && !c.isNull("end_time")) {
+                    endDate = c.getString("end_time");
+                    Log.i(TAG, "endDate : " + endDate);
+                }
+
+                if (c.has("description") && !c.isNull("description")) {
+                    description = c.getString("description");
+                    Log.i(TAG, "desc : " + description);
+                }
+
+                if (c.has("cover") && !c.isNull("cover")) {
+                    cover = c.getJSONObject("cover");
+                    source = cover.getString("source");
+                    Log.i(TAG, "source : " + source);
+                }
+
+                if (c.has("place") && !c.isNull("place")) {
+                    place = c.getJSONObject("place");
+                    if (place.has("location") && !place.isNull("location")) {
+                        location = place.getJSONObject("location");
+                        if (location.has("city") && !location.isNull("city")) {
+                            city = location.getString("city");
+                            Log.i(TAG, "place : " + place);
+                            Log.i(TAG, "location : " + location);
+                            Log.i(TAG, "city : " + city);
+                        }
+                    }
+                }
+                if (city.equals("Kathmandu") || city.equals("kathmandu") || city.equals("nepal") || city.equals("Nepal")) {
+                    // inserting json data into arraylist when video is available and isnt private
+                    JsonModuleParcelable jsonModule = new JsonModuleParcelable();
+                    jsonModule.setName(name);
+                    jsonModule.setStartDate(startDate);
+                    jsonModule.setEndDate(endDate);
+                    jsonModule.setDescription(description);
+                    jsonModule.setCity(city);
+                    jsonModule.setSource(source);
+                    list.add(jsonModule);
+                }
+            }
+            MyRecyclerViewAdapter mAdapter = new MyRecyclerViewAdapter(getActivity(), list);
+            mRecyclerView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
+//            profileLayout.setVisibility(View.GONE);
+//            mRecyclerView.setVisibility(View.VISIBLE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void updateUI() {
         boolean enableButtons = AccessToken.getCurrentAccessToken() != null;
 
@@ -197,7 +314,7 @@ public class FacebookFragment extends Fragment {
             logoutButton.setVisibility(View.VISIBLE);
         } else {
             Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.batman);
-            profilePicImageView.setImageBitmap(ImageHelper.getRoundedCornerBitmap(getContext(), icon, 200, 200, 200, false, false, false, false));
+            profilePicImageView.setImageBitmap(icon);
             greeting.setText(null);
             postingEnabled = false;
             profileLayout.setVisibility(View.GONE);
