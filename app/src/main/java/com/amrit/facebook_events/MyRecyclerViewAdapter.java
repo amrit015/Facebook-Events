@@ -29,10 +29,10 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.E
     JsonModuleParcelable jsonModuleParcelable;
     private ArrayList<JsonModuleParcelable> mDataset;
     private String name;
-    private String startDate;
-    private String endDate;
-    private String description;
-    private String city;
+    //    private String startDate;
+//    private String endDate;
+//    private String description;
+//    private String city;
     private int position;
     private String image;
 
@@ -55,16 +55,17 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.E
         jsonModuleParcelable = mDataset.get(position);
         if (!jsonModuleParcelable.getName().equals("")) {
             holder.eventsName.setText(jsonModuleParcelable.getName());
-            holder.eventsStartDate.setText(jsonModuleParcelable.getStartDate());
-            holder.eventsEndDate.setText(jsonModuleParcelable.getEndDate());
-            holder.eventsDescription.setText(jsonModuleParcelable.getDescription());
-            holder.eventsCity.setText(jsonModuleParcelable.getCity());
+//            holder.eventsStartDate.setText(jsonModuleParcelable.getStartDate());
+//            holder.eventsEndDate.setText(jsonModuleParcelable.getEndDate());
+//            holder.eventsDescription.setText(jsonModuleParcelable.getDescription());
+//            holder.eventsCity.setText(jsonModuleParcelable.getCity());
 
             holder.progressBar.setVisibility(View.VISIBLE);
             //using Glide to load images
             Glide.clear(holder.eventsImage);
             Glide.with(context)
                     .load(jsonModuleParcelable.getSource())
+                    .fitCenter()
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -87,11 +88,11 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.E
             @Override
             public void onClick(View v) {
                 jsonModuleParcelable = mDataset.get(position);
-                setName(holder.eventsName.getText().toString());
-                setStartDate(holder.eventsStartDate.getText().toString());
-                setEndDate(holder.eventsEndDate.getText().toString());
-                setDescription(holder.eventsDescription.getText().toString());
-                setCity(holder.eventsCity.getText().toString());
+//                setName(holder.eventsName.getText().toString());
+//                setStartDate(holder.eventsStartDate.getText().toString());
+//                setEndDate(holder.eventsEndDate.getText().toString());
+//                setDescription(holder.eventsDescription.getText().toString());
+//                setCity(holder.eventsCity.getText().toString());
                 setPosition(position);
             }
         });
@@ -101,6 +102,17 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.E
     public int getItemCount() {
         return mDataset.size();
     }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+
+    /*
 
     // saving and accessing name,description,position for use with descriptionFragment
     public String getDescription() {
@@ -117,14 +129,6 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.E
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
     }
 
     public String getStartDate() {
@@ -151,6 +155,8 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.E
         this.city = city;
     }
 
+    */
+
     public class EventsHolder extends RecyclerView.ViewHolder {
 
         TextView eventsName;
@@ -164,14 +170,14 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.E
 
         public EventsHolder(View itemView) {
             super(itemView);
-            cardView = (CardView) itemView.findViewById(R.id.card_view);
-            eventsImage = (ImageView) itemView.findViewById(R.id.events_image);
-            eventsName = (TextView) itemView.findViewById(R.id.events_name);
-            eventsStartDate = (TextView) itemView.findViewById(R.id.events_start_date);
-            eventsEndDate = (TextView) itemView.findViewById(R.id.events_end_date);
-            eventsDescription = (TextView) itemView.findViewById(R.id.events_description);
-            eventsCity = (TextView) itemView.findViewById(R.id.events_city);
-            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
+            cardView = itemView.findViewById(R.id.card_view);
+            eventsImage = itemView.findViewById(R.id.events_image);
+            eventsName = itemView.findViewById(R.id.events_name);
+//            eventsStartDate = (TextView) itemView.findViewById(R.id.events_start_date);
+//            eventsEndDate = (TextView) itemView.findViewById(R.id.events_end_date);
+//            eventsDescription = (TextView) itemView.findViewById(R.id.events_description);
+//            eventsCity = (TextView) itemView.findViewById(R.id.events_city);
+            progressBar = itemView.findViewById(R.id.progressBar);
             Log.i(LOG_TAG, "Adding Listener");
         }
     }

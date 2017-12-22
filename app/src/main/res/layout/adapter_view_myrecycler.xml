@@ -15,17 +15,17 @@
         card_view:cardBackgroundColor="#FFFFFF"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="2dp"
-        card_view:contentPadding="10dp">
+        card_view:contentPadding="3dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <RelativeLayout
                 android:id="@+id/layout_image"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center">
+                android:layout_height="match_parent"
+                android:gravity="top|center">
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -49,52 +49,17 @@
                 android:id="@+id/card_main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/layout_image">
+                android:layout_below="@+id/layout_image"
+                android:background="@color/cardview_dark_background"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/events_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:textColor="#000000"
+                    android:textColor="#faf8f8"
                     android:textStyle="bold|italic" />
-
-                <TextView
-                    android:id="@+id/events_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/events_name"
-                    android:layout_marginTop="2dp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/events_city"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/events_description"
-                    android:paddingTop="2dp"
-                    android:textColor="#b94545"
-                    android:visibility="visible" />
-
-
-                <TextView
-                    android:id="@+id/events_start_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/events_city"
-                    android:paddingTop="2dp"
-                    android:textColor="#000000"
-                    android:visibility="visible" />
-
-
-                <TextView
-                    android:id="@+id/events_end_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/events_start_date"
-                    android:paddingTop="2dp"
-                    android:textColor="#000000"
-                    android:visibility="visible" />
 
             </RelativeLayout>
         </RelativeLayout>

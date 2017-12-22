@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,6 +65,7 @@ public class FacebookFragment extends Fragment {
     LinearLayout profileLayout;
     ImageView profileImage;
     TextView profileName;
+    GridLayoutManager mGridLayoutManager;
     private CallbackManager callbackManager;
     private LoginButton loginButton;
     private LoginButton logoutButton;
@@ -100,7 +101,6 @@ public class FacebookFragment extends Fragment {
         // reporting.  Do so in the onResume methods of the primary Activities that an app may be
         // launched into.
         AppEventsLogger.activateApp(getActivity());
-
         updateUI();
     }
 
@@ -123,19 +123,21 @@ public class FacebookFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_facebook, parent, false);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView = v.findViewById(R.id.recycler_view);
+//        mLayoutManager = new LinearLayoutManager(getActivity());
+        mGridLayoutManager = new GridLayoutManager(getActivity(), 1);
         mRecyclerView.setHasFixedSize(false);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        loginButton = (LoginButton) v.findViewById(R.id.loginButton);
-        main_layout = (LinearLayout) v.findViewById(R.id.main_layout);
-        profilePicImageView = (ImageView) v.findViewById(R.id.profilePicture);
-        greeting = (TextView) v.findViewById(R.id.greeting);
-        profileLayout = (LinearLayout) v.findViewById(R.id.profile_details);
-        profileImage = (ImageView) v.findViewById(R.id.profile_picture);
-        profileName = (TextView) v.findViewById(R.id.profile_name);
-        logoutButton = (LoginButton) v.findViewById(R.id.logoutButton);
+        loginButton = v.findViewById(R.id.loginButton);
+        main_layout = v.findViewById(R.id.main_layout);
+        profilePicImageView = v.findViewById(R.id.profilePicture);
+        greeting = v.findViewById(R.id.greeting);
+        profileLayout = v.findViewById(R.id.profile_details);
+        profileImage = v.findViewById(R.id.profile_picture);
+        profileName = v.findViewById(R.id.profile_name);
+        logoutButton = v.findViewById(R.id.logoutButton);
 
         // If using in a fragment
         loginButton.setFragment(this);
@@ -294,8 +296,8 @@ public class FacebookFragment extends Fragment {
             MyRecyclerViewAdapter mAdapter = new MyRecyclerViewAdapter(getActivity(), list);
             mRecyclerView.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
-//            profileLayout.setVisibility(View.GONE);
-//            mRecyclerView.setVisibility(View.VISIBLE);
+            profileLayout.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         } catch (JSONException e) {
             e.printStackTrace();
         }

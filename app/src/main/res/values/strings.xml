@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Test_facebook_api</string>
+    <string name="app_name">Facebook Events</string>
     <string name="facebook_app_id">427275814320195</string>
     <string name="fb_login_protocol_scheme">fb427275814320195</string>
     <string name="cancelled">Cancelled</string>
